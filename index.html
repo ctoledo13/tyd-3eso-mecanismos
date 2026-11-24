@@ -1116,11 +1116,22 @@ function setLang(l){
  try{localStorage.setItem("tyd3_lang",l);}catch(e){}
 }
 document.querySelectorAll(".langs button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+/* Enlaces directos a cada pestaña: ud03-mecanismos.html#actividades1, #reto, ... */
+const SLUG={s0:"introduccion",s1:"palancas",a1:"actividades1",s2:"poleas",s3:"transformacion",a2:"actividades2",s5:"reto",s6:"glosario",s7:"webgrafia"};
+const BYSLUG=Object.fromEntries(Object.entries(SLUG).map(([k,v])=>[v,k]));
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===b.dataset.s));
+ if(SLUG[b.dataset.s] && location.hash!=="#"+SLUG[b.dataset.s]) history.replaceState(null,"","#"+SLUG[b.dataset.s]);
  window.scrollTo({top:0,behavior:"smooth"});
 });
+function openFromHash(){
+ const id=BYSLUG[decodeURIComponent(location.hash.slice(1)).toLowerCase()];
+ const b=id&&document.querySelector(`nav button[data-s="${id}"]`);
+ if(b && !b.classList.contains("on")) b.click();
+}
+window.addEventListener("hashchange",openFromHash);
+openFromHash();
 
 /* ---------- GLOSSARY ---------- */
 document.querySelector("#gloss tbody").innerHTML = GLOSS.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="ar">${r[2]}</td></tr>`).join("");
